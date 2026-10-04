@@ -9,3 +9,8 @@
 .priority-low {
     color: green;
 }
+
+.completed {
+    opacity: 0.6;
+    text-decoration: line-through;
+}

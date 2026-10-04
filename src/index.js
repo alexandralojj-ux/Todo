@@ -45,11 +45,13 @@ function removeProject(project) {
     if (currentProject === project) {
         currentProject = defaultProject;
 
-        displayTodos(currentProject);
-
         const projectTitle = document.querySelector("#project-title");
         projectTitle.textContent = currentProject.name;
+
+        displayTodos(currentProject);
     }
+
+    displayProjects(projects, selectProject)
 }
 
 const addProjectButton = document.querySelector("#add-project");

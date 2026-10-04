@@ -24,10 +24,26 @@ function displayTodos(project) {
     project.todos.forEach(todo => {
         const todoElement = document.createElement("div");
         todoElement.classList.add("todo-card");
-        let expanded = false;
+
+        if (todo.completed) {
+        todoElement.classList.add("completed");
+        }
+
+        const titleElement = document.createElement("h3");
+        titleElement.textContent = todo.title;
+
+        const dateElement = document.createElement("p");
+        dateElement.textContent = todo.dueDate;
+
+        const priorityElement = document.createElement("p");
+        priorityElement.textContent = `Priority: ${todo.priority}`;
+
+        priorityElement.classList.add(`priority-${todo.priority}`);
 
         const completeButton = document.createElement("button");
-        completeButton.textContent = todo.completed ? "Completed" : "Complete";
+        completeButton.textContent = todo.completed
+            ? "Completed"
+            : "Complete";
 
         completeButton.addEventListener("click", (event) => {
             event.stopPropagation();
@@ -37,7 +53,12 @@ function displayTodos(project) {
             displayTodos(project);
         });
 
+        todoElement.appendChild(titleElement);
+        todoElement.appendChild(dateElement);
+        todoElement.appendChild(priorityElement);
         todoElement.appendChild(completeButton);
+
+        let expanded = false;
 
         todoElement.addEventListener("click", () => {
             if (!expanded) {
@@ -48,30 +69,35 @@ function displayTodos(project) {
 
                 todoElement.appendChild(descriptionElement);
 
-                const deleteButton = document.createElement("button");
-                deleteButton.textContent = "Delete";
-
-                deleteButton.addEventListener("click", () => {
-                    event.stopPropagation();
-                    project.removeTodo(todo);
-                    displayTodos(project);
-                });
-
-                todoElement.appendChild(deleteButton);
-
-                
                 const editButton = document.createElement("button");
                 editButton.textContent = "Edit";
 
-                editButton.addEventListener("click", () => {
+                editButton.addEventListener("click", (event) => {
                     event.stopPropagation();
 
-                    const newTitle = prompt("Titlu:", todo.title);
-                    const newDescription = prompt("Descriere:", todo.description);
-                    const newDueDate = prompt("Data:", todo.dueDate);
-                    const newPriority = prompt("Prioritate:", todo.priority);
+                    const newTitle = prompt("Title:", todo.title);
 
-                    if (newTitle && newDescription && newDueDate && newPriority) {
+                    const newDescription = prompt(
+                        "Description:",
+                        todo.description
+                    );
+
+                    const newDueDate = prompt(
+                        "Date:",
+                        todo.dueDate
+                    );
+
+                    const newPriority = prompt(
+                        "Priority:",
+                        todo.priority
+                    );
+
+                    if (
+                        newTitle &&
+                        newDescription &&
+                        newDueDate &&
+                        newPriority
+                    ) {
                         todo.editTodo(
                             newTitle,
                             newDescription,
@@ -83,34 +109,40 @@ function displayTodos(project) {
                     }
                 });
 
+                const deleteButton = document.createElement("button");
+                deleteButton.textContent = "Delete";
+
+                deleteButton.addEventListener("click", (event) => {
+                    event.stopPropagation();
+
+                    project.removeTodo(todo);
+
+                    displayTodos(project);
+                });
+
                 todoElement.appendChild(editButton);
+                todoElement.appendChild(deleteButton);
 
                 expanded = true;
-
             } else {
-                const descriptionElement = todoElement.querySelector(".todo-description");
+                const descriptionElement =
+                    todoElement.querySelector(".todo-description");
 
                 if (descriptionElement) {
                     descriptionElement.remove();
                 }
 
+                const buttons = todoElement.querySelectorAll(
+                    "button:not(:first-of-type)"
+                );
+
+                buttons.forEach(button => {
+                    button.remove();
+                });
+
                 expanded = false;
             }
         });
-
-        const titleElement = document.createElement("h3");
-        titleElement.textContent = todo.title;
-
-        const dateElement = document.createElement("p");
-        dateElement.textContent = todo.dueDate;
-
-        const priorityElement = document.createElement("p");
-        priorityElement.textContent = `Priority: ${todo.priority}`;
-        priorityElement.classList.add(`priority-${todo.priority}`);
-
-        todoElement.appendChild(titleElement);
-        todoElement.appendChild(dateElement);
-        todoElement.appendChild(priorityElement);
 
         todosContainer.appendChild(todoElement);
     });
