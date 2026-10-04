@@ -3,26 +3,37 @@ import "./style.css";
 import { createTodo } from "./todo.js";
 import { createProject } from "./project.js";
 import { displayProjects, displayTodos } from "./display.js";
+import { saveProjects, loadProjects } from "./storage.js";
 
-const projects = [];
+let projects = loadProjects();
 
-const defaultProject = createProject("Default");
+if (!projects) {
+    projects = [createProject("Default")];
+}
 
-projects.push(defaultProject);
+const defaultProject = projects[0];
 
 let currentProject = defaultProject;
+
+function saveAllProjects() {
+    saveProjects(projects);
+}
 
 function addProject(name) {
     const project = createProject(name);
     projects.push(project);
+
+    saveProjects(projects);
 }
 
 displayProjects(projects, selectProject);
-displayTodos(currentProject);
+displayTodos(currentProject, saveAllProjects);
 
 function addTodo(title, description, dueDate, priority) {
     const todo = createTodo(title, description, dueDate, priority);
     currentProject.addTodo(todo);
+
+    saveProjects(projects);
 }
 
 function selectProject(project) {
@@ -31,7 +42,7 @@ function selectProject(project) {
     const projectTitle = document.querySelector("#project-title");
     projectTitle.textContent = project.name;
 
-    displayTodos(currentProject);
+    displayTodos(currentProject, saveAllProjects);
 }
 
 function removeProject(project) {
@@ -48,10 +59,12 @@ function removeProject(project) {
         const projectTitle = document.querySelector("#project-title");
         projectTitle.textContent = currentProject.name;
 
-        displayTodos(currentProject);
+        displayTodos(currentProject, saveAllProjects);
     }
 
-    displayProjects(projects, selectProject)
+    displayProjects(projects, selectProject);
+
+    saveProjects(projects);
 }
 
 const addProjectButton = document.querySelector("#add-project");
@@ -78,7 +91,7 @@ todoForm.addEventListener("submit", (event) => {
 
     addTodo(title, description, dueDate, priority);
 
-    displayTodos(currentProject);
+    displayTodos(currentProject, saveAllProjects);
 
     todoForm.reset();
     todoForm.hidden = true;

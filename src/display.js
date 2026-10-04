@@ -16,7 +16,7 @@ function displayProjects(projects, selectProject) {
     });
 }
 
-function displayTodos(project) {
+function displayTodos(project, saveProjects) {
     const todosContainer = document.querySelector("#todos");
 
     todosContainer.innerHTML = "";
@@ -49,8 +49,9 @@ function displayTodos(project) {
             event.stopPropagation();
 
             todo.completeTodo();
+            saveProjects();
 
-            displayTodos(project);
+            displayTodos(project, saveProjects);
         });
 
         todoElement.appendChild(titleElement);
@@ -104,8 +105,9 @@ function displayTodos(project) {
                             newDueDate,
                             newPriority
                         );
+                        saveProjects();
 
-                        displayTodos(project);
+                        displayTodos(project, saveProjects);
                     }
                 });
 
@@ -117,7 +119,9 @@ function displayTodos(project) {
 
                     project.removeTodo(todo);
 
-                    displayTodos(project);
+                    saveProjects();
+
+                    displayTodos(project, saveProjects);
                 });
 
                 todoElement.appendChild(editButton);
